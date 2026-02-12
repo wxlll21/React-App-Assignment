@@ -1,56 +1,41 @@
 import { useState, useCallback } from "react"
 
-/**
- * Renders an array of strings passed in that can be filtered and added to as an
- * unordered list.
- * @returns Component
- */
 export default function Sidebar({ initialMenuItems = [] }) {
-  // State for new menu item input
-  const [newMenuItem, setNewMenuItem] = useState("")
-  // TODO 2: Maintain current menu items
-  const [menuItems, setMenuItems] = useState(initialMenuItems)
-  // State for filter input
-  const [filter, setFilter] = useState("")
+  const [input, setInput] = useState("") // new item input
+  const [menuList, setMenuList] = useState(initialMenuItems) // current menu items
+  const [search, setSearch] = useState("") // filter text
 
-  // TODO 3: Add a new menu item
-  const addMenuItem = useCallback(() => {
-    if (!newMenuItem.trim()) return // ignore empty input
-    setMenuItems([...menuItems, newMenuItem]) // add new item
-    setNewMenuItem("") // clear input after adding
-  }, [newMenuItem, menuItems])
+  const addItem = useCallback(() => {
+    if (!input.trim()) return // skip empty
+    setMenuList([...menuList, input]) // add new item
+    setInput("") // reset input
+  }, [input, menuList])
 
-  // TODO 4: Filter menu items based on filter input
-  const filteredMenuItems = menuItems.filter((item) => {
-    const regex = new RegExp(filter, "i") // case-insensitive
+  const visibleItems = menuList.filter(item => {
+    const regex = new RegExp(search, "i") // case-insensitive
     return regex.test(item)
   })
 
-  // TODO 1 & 4: Render filtered menu items
   return (
     <div>
       <input
         type="text"
-        id="newMenuItemValue"
-        value={newMenuItem}
-        onChange={(event) => setNewMenuItem(event.target.value)}
-        placeholder="Add new menu item"
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        placeholder="Add a menu item"
       />
       <br />
-      <button onClick={addMenuItem}>
-        Add Item
-      </button>
+      <button onClick={addItem}>Add</button>
       <br />
       <input
-        id="filter"
         type="text"
-        value={filter}
-        onChange={(event) => setFilter(event.target.value)}
-        placeholder="Filter by..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder="Filter items"
       />
       <ul>
-        {filteredMenuItems.map((item, index) => (
-          <li key={index}>{item}</li>
+        {visibleItems.map((item, i) => (
+          <li key={i}>{item}</li>
         ))}
       </ul>
     </div>
